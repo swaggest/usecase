@@ -21,17 +21,13 @@ linters-settings:
 linters:
   enable-all: true
   disable:
-    - goerr113
-    - gomnd
-    - gocyclo
     - gochecknoglobals
-    - funlen
-    - gocognit
 
 issues:
   exclude-use-default: false
   exclude-rules:
     - linters:
+        - goerr113
         - gomnd
         - goconst
       path: "_test.go"
