@@ -62,9 +62,9 @@ type HasDescription interface {
 	Description() string
 }
 
-// HasTag declares tag of use cases group.
-type HasTag interface {
-	Tag() string
+// HasTags declares tags of use cases group.
+type HasTags interface {
+	Tags() []string
 }
 
 // HasExpectedErrors declares errors that are expected to cause use case failure.
@@ -81,13 +81,21 @@ type HasIsDeprecated interface {
 type Info struct {
 	title          string
 	description    string
-	tag            string
+	tags           []string
 	expectedErrors []error
 	isDeprecated   bool
 }
 
+var (
+	_ HasTags           = Info{}
+	_ HasTitle          = Info{}
+	_ HasDescription    = Info{}
+	_ HasIsDeprecated   = Info{}
+	_ HasExpectedErrors = Info{}
+)
+
 // IsDeprecated implements HasIsDeprecated.
-func (i *Info) IsDeprecated() bool {
+func (i Info) IsDeprecated() bool {
 	return i.isDeprecated
 }
 
@@ -97,7 +105,7 @@ func (i *Info) SetIsDeprecated(isDeprecated bool) {
 }
 
 // ExpectedErrors implements HasExpectedErrors.
-func (i *Info) ExpectedErrors() []error {
+func (i Info) ExpectedErrors() []error {
 	return i.expectedErrors
 }
 
@@ -106,18 +114,18 @@ func (i *Info) SetExpectedErrors(expectedErrors ...error) {
 	i.expectedErrors = expectedErrors
 }
 
-// Tag implements HasTag.
-func (i *Info) Tag() string {
-	return i.tag
+// Tags implements HasTag.
+func (i Info) Tags() []string {
+	return i.tags
 }
 
-// SetTag sets tag of use cases group.
-func (i *Info) SetTag(tag string) {
-	i.tag = tag
+// SetTags sets tags of use cases group.
+func (i *Info) SetTags(tags ...string) {
+	i.tags = tags
 }
 
 // Description implements HasDescription.
-func (i *Info) Description() string {
+func (i Info) Description() string {
 	return i.description
 }
 
@@ -127,7 +135,7 @@ func (i *Info) SetDescription(description string) {
 }
 
 // Title implements HasTitle.
-func (i *Info) Title() string {
+func (i Info) Title() string {
 	return i.title
 }
 
