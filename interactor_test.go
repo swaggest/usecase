@@ -28,13 +28,13 @@ func TestInfo(t *testing.T) {
 	i := usecase.Info{}
 	i.SetDescription("Description")
 	i.SetTitle("Title")
-	i.SetTag("Tag")
+	i.SetTags("tag1", "tag2")
 	i.SetIsDeprecated(true)
 	i.SetExpectedErrors(usecase.Error{StatusCode: status.InvalidArgument})
 
 	assert.Equal(t, "Description", i.Description())
 	assert.Equal(t, "Title", i.Title())
-	assert.Equal(t, "Tag", i.Tag())
+	assert.Equal(t, []string{"tag1", "tag2"}, i.Tags())
 	assert.Equal(t, true, i.IsDeprecated())
 	assert.Equal(t, []error{usecase.Error{StatusCode: status.InvalidArgument}}, i.ExpectedErrors())
 }
