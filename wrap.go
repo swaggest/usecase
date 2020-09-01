@@ -44,6 +44,10 @@ func Wrap(interactor Interactor, mw ...Middleware) Interactor {
 // As will panic if target is not a non-nil pointer to either a type that implements
 // Interactor, or to any interface type.
 func As(interactor Interactor, target interface{}) bool {
+	if interactor == nil {
+		return false
+	}
+
 	if target == nil {
 		panic("target cannot be nil")
 	}
