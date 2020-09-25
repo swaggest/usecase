@@ -19,15 +19,15 @@ func (o *OutputWithEmbeddedWriter) SetWriter(w io.Writer) {
 
 // OutputWithNoContent is embeddable structure to provide conditional output discard state.
 type OutputWithNoContent struct {
-	enabled bool
+	disabled bool
 }
 
 // SetNoContent controls output discard state.
 func (o *OutputWithNoContent) SetNoContent(enabled bool) {
-	o.enabled = enabled
+	o.disabled = !enabled
 }
 
 // NoContent returns output discard state.
 func (o OutputWithNoContent) NoContent() bool {
-	return o.enabled
+	return !o.disabled
 }
