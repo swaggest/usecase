@@ -26,7 +26,7 @@ const (
 	// errors raised by APIs that do not return enough error information
 	// may be converted to this error.
 	//
-	// HTTP Mapping: 500 Internal Server Error
+	// HTTP Mapping: 500 Internal Server Error.
 	Unknown Code = 2
 
 	// InvalidArgument indicates client specified an invalid argument.
@@ -151,7 +151,7 @@ const (
 
 	// DataLoss indicates unrecoverable data loss or corruption.
 	//
-	// HTTP Mapping: 500 Internal Server Error
+	// HTTP Mapping: 500 Internal Server Error.
 	DataLoss Code = 15
 
 	// Unauthenticated indicates the request does not have valid
@@ -188,6 +188,7 @@ var (
 		for str, code := range strToCode {
 			res[code] = str
 		}
+
 		return res
 	}()
 )

@@ -74,6 +74,7 @@ func As(interactor Interactor, target interface{}) bool {
 
 		if reflect.TypeOf(interactor).AssignableTo(targetType) {
 			val.Elem().Set(reflect.ValueOf(interactor))
+
 			return true
 		}
 

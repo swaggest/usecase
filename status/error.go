@@ -5,8 +5,9 @@ import "strings"
 var codeToMsg = func() map[Code]string {
 	res := make(map[Code]string, len(strToCode))
 	for str, code := range strToCode {
-		res[code] = strings.ToLower(strings.Replace(str, "_", " ", -1))
+		res[code] = strings.ToLower(strings.ReplaceAll(str, "_", " "))
 	}
+
 	return res
 }()
 

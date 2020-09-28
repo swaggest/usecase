@@ -22,7 +22,7 @@ func TestOutputWithEmbeddedWriter_SetWriter(t *testing.T) {
 
 func TestOutputWithNoContent_NoContent(t *testing.T) {
 	o := usecase.OutputWithNoContent{}
-	assert.False(t, o.NoContent())
-	o.SetNoContent(true)
 	assert.True(t, o.NoContent())
+	o.SetNoContent(false)
+	assert.False(t, o.NoContent())
 }

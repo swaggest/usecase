@@ -26,12 +26,14 @@ func TestInteract_Interact(t *testing.T) {
 
 func TestInfo(t *testing.T) {
 	i := usecase.Info{}
+	i.SetName("name")
 	i.SetDescription("Description")
 	i.SetTitle("Title")
 	i.SetTags("tag1", "tag2")
 	i.SetIsDeprecated(true)
 	i.SetExpectedErrors(usecase.Error{StatusCode: status.InvalidArgument})
 
+	assert.Equal(t, "name", i.Name())
 	assert.Equal(t, "Description", i.Description())
 	assert.Equal(t, "Title", i.Title())
 	assert.Equal(t, []string{"tag1", "tag2"}, i.Tags())

@@ -57,6 +57,11 @@ type HasTitle interface {
 	Title() string
 }
 
+// HasName declares title.
+type HasName interface {
+	Name() string
+}
+
 // HasDescription declares description.
 type HasDescription interface {
 	Description() string
@@ -79,6 +84,7 @@ type HasIsDeprecated interface {
 
 // Info exposes information about use case.
 type Info struct {
+	name           string
 	title          string
 	description    string
 	tags           []string
@@ -142,4 +148,14 @@ func (i Info) Title() string {
 // SetTitle sets use case title.
 func (i *Info) SetTitle(title string) {
 	i.title = title
+}
+
+// Name implements HasName.
+func (i Info) Name() string {
+	return i.name
+}
+
+// SetName sets use case title.
+func (i *Info) SetName(name string) {
+	i.name = name
 }

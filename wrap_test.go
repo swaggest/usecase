@@ -20,6 +20,7 @@ func TestWrap(t *testing.T) {
 			invocationOrder = append(invocationOrder, name+" start")
 			err := next.Interact(ctx, input, output)
 			invocationOrder = append(invocationOrder, name+" end")
+
 			return err
 		})
 	}
@@ -56,16 +57,15 @@ func TestWrap(t *testing.T) {
 
 	i := usecase.Wrap(usecase.Interact(func(ctx context.Context, input, output interface{}) error {
 		invocationOrder = append(invocationOrder, "interaction")
+
 		return nil
 	}), mw1, mw2)
-
 	err := i.Interact(context.Background(), nil, nil)
-	assert.NoError(t, err)
 
+	assert.NoError(t, err)
 	assert.Equal(t, []string{
 		"mw1 start", "mw2 start", "interaction", "mw2 end", "mw1 end",
 	}, invocationOrder)
-
 	assert.True(t, usecase.As(i, &withInput))
 	assert.True(t, usecase.As(i, &withOutput))
 }
