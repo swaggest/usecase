@@ -159,3 +159,11 @@ func (i Info) Name() string {
 func (i *Info) SetName(name string) {
 	i.name = name
 }
+
+// IOInteractor is an interactor with input and output.
+type IOInteractor struct {
+	Interactor
+	Info
+	WithInput
+	WithOutput
+}

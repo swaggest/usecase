@@ -1,5 +1,3 @@
-GOLANGCI_LINT_VERSION := "v1.31.0"
-
 # The head of Makefile determines location of dev-go to include standard targets.
 GO ?= go
 export GO111MODULE = on
