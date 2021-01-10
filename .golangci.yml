@@ -30,4 +30,8 @@ issues:
         - goerr113
         - gomnd
         - goconst
+        - wrapcheck
+        - paralleltest
+        - errorlint
+        - exhaustivestruct
       path: "_test.go"
