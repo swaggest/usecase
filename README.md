@@ -12,7 +12,15 @@ in Go application.
 
 ![Clean Architecture](https://blog.cleancoder.com/uncle-bob/images/2012-08-13-the-clean-architecture/CleanArchitecture.jpg)
 
-This abstraction is intended for use with automated transport layer, for example see [`REST`](https://github.com/swaggest/rest). 
+## Why?
+
+Isolating transport layer from business logic reduces coupling and allows better control on both transport and business 
+sides. For example the application needs to consume AMQP events and act on them, with isolated use case interactor it is 
+easy to trigger same action with HTTP message (as a part of developer tools).
+
+Use case interactors declare their ports and may serve as a source of information for documentation automation.
+
+This abstraction is intended for use with automated transport layer, for example see [`REST`](https://github.com/swaggest/rest).
 
 ## Usage
 
