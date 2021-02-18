@@ -22,6 +22,7 @@ linters:
   enable-all: true
   disable:
     - gochecknoglobals
+    - interfacer
 
 issues:
   exclude-use-default: false
@@ -34,4 +35,5 @@ issues:
         - paralleltest
         - errorlint
         - exhaustivestruct
+        - forbidigo
       path: "_test.go"
