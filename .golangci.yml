@@ -23,6 +23,7 @@ linters:
   disable:
     - gochecknoglobals
     - interfacer
+    - exhaustivestruct
 
 issues:
   exclude-use-default: false
