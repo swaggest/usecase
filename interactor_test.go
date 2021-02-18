@@ -40,3 +40,12 @@ func TestInfo(t *testing.T) {
 	assert.Equal(t, true, i.IsDeprecated())
 	assert.Equal(t, []error{usecase.Error{StatusCode: status.InvalidArgument}}, i.ExpectedErrors())
 }
+
+func TestNewIOI(t *testing.T) {
+	u := usecase.NewIOI(new(string), new(int), func(ctx context.Context, input, output interface{}) error {
+		return nil
+	})
+
+	assert.Equal(t, "swaggest/usecase_test.TestNewIOI", u.Name())
+	assert.Equal(t, "TestNewIOI", u.Title())
+}

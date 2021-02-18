@@ -2,6 +2,9 @@ package usecase
 
 import (
 	"context"
+	"path"
+	"runtime"
+	"strings"
 )
 
 // Interactor orchestrates the flow of data to and from the entities,
@@ -166,4 +169,40 @@ type IOInteractor struct {
 	Info
 	WithInput
 	WithOutput
+}
+
+// NewIOI creates use case interactor with input, output and interact action function.
+//
+// It pre-fills name and title with caller function.
+func NewIOI(input, output interface{}, interact Interact) IOInteractor {
+	u := IOInteractor{}
+	u.Input = input
+	u.Output = output
+	u.Interactor = interact
+
+	u.name, u.title = callerFunc()
+
+	return u
+}
+
+// callerFunc returns trimmed path and name of parent function.
+func callerFunc() (string, string) {
+	skipFrames := 2
+
+	pc, _, _, ok := runtime.Caller(skipFrames)
+	if !ok {
+		return "", ""
+	}
+
+	f := runtime.FuncForPC(pc)
+
+	pathName := path.Base(path.Dir(f.Name())) + "/" + path.Base(f.Name())
+	title := path.Base(f.Name())
+
+	parts := strings.SplitN(title, ".", 2)
+	if len(parts) != 1 {
+		title = parts[1]
+	}
+
+	return pathName, title
 }
