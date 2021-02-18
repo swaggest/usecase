@@ -3,10 +3,10 @@ package usecase_test
 import (
 	"context"
 	"fmt"
-	"github.com/swaggest/usecase/status"
 	"log"
 
 	"github.com/swaggest/usecase"
+	"github.com/swaggest/usecase/status"
 )
 
 func ExampleNewIOI() {
@@ -51,7 +51,7 @@ func ExampleNewIOI() {
 	// For example request body could be json unmarshaled, or request parameters can be mapped.
 	input := new(myInput)
 	// input := reflect.New(reflect.TypeOf(u.InputPort()))
-	input.Param1 = 123
+	input.Param1 = 1234
 	input.Param2 = "abc"
 
 	output := new(myOutput)
@@ -67,5 +67,5 @@ func ExampleNewIOI() {
 	fmt.Printf("%+v\n", output)
 
 	// Output:
-	// &{Value1:246 Value2:abcabc}
+	// &{Value1:2468 Value2:abcabc}
 }
