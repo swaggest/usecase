@@ -5,6 +5,8 @@ import (
 	"path"
 	"runtime"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 )
 
 // Interactor orchestrates the flow of data to and from the entities,
@@ -185,6 +187,13 @@ func NewIOI(input, output interface{}, interact Interact) IOInteractor {
 	return u
 }
 
+var titleReplacer = strings.NewReplacer(
+	"(", "",
+	".", "",
+	"*", "",
+	")", "",
+)
+
 // callerFunc returns trimmed path and name of parent function.
 func callerFunc() (string, string) {
 	skipFrames := 2
@@ -201,8 +210,64 @@ func callerFunc() (string, string) {
 
 	parts := strings.SplitN(title, ".", 2)
 	if len(parts) != 1 {
-		title = parts[1]
+		title = parts[len(parts)-1]
+		title = titleReplacer.Replace(title)
+		title = splitCamelcase(title)
 	}
 
 	return pathName, title
+}
+
+// borrowed from https://pkg.go.dev/github.com/fatih/camelcase#Split to avoid external dependency.
+func splitCamelcase(src string) string {
+	// don't split invalid utf8
+	if !utf8.ValidString(src) {
+		return src
+	}
+
+	var (
+		entries []string
+		runes   [][]rune
+	)
+
+	lastClass := 0
+	class := 0
+
+	// split into fields based on class of unicode character
+	for _, r := range src {
+		switch {
+		case unicode.IsLower(r):
+			class = 1
+		case unicode.IsUpper(r):
+			class = 2
+		case unicode.IsDigit(r):
+			class = 3
+		default:
+			class = 4
+		}
+
+		if class == lastClass && runes != nil {
+			runes[len(runes)-1] = append(runes[len(runes)-1], r)
+		} else {
+			runes = append(runes, []rune{r})
+		}
+
+		lastClass = class
+	}
+	// handle upper case -> lower case sequences, e.g.
+	// "PDFL", "oader" -> "PDF", "Loader"
+	for i := 0; i < len(runes)-1; i++ {
+		if unicode.IsUpper(runes[i][0]) && unicode.IsLower(runes[i+1][0]) {
+			runes[i+1] = append([]rune{runes[i][len(runes[i])-1]}, runes[i+1]...)
+			runes[i] = runes[i][:len(runes[i])-1]
+		}
+	}
+	// construct []string from results
+	for _, s := range runes {
+		if len(s) > 0 {
+			entries = append(entries, string(s))
+		}
+	}
+
+	return strings.Join(entries, " ")
 }

@@ -41,11 +41,33 @@ func TestInfo(t *testing.T) {
 	assert.Equal(t, []error{usecase.Error{StatusCode: status.InvalidArgument}}, i.ExpectedErrors())
 }
 
+type Foo struct{}
+
+func (f *Foo) Bar() usecase.IOInteractor {
+	return usecase.NewIOI(nil, nil, func(ctx context.Context, input, output interface{}) error {
+		return nil
+	})
+}
+
+func (f Foo) Baz() usecase.IOInteractor {
+	return usecase.NewIOI(nil, nil, func(ctx context.Context, input, output interface{}) error {
+		return nil
+	})
+}
+
 func TestNewIOI(t *testing.T) {
 	u := usecase.NewIOI(new(string), new(int), func(ctx context.Context, input, output interface{}) error {
 		return nil
 	})
 
 	assert.Equal(t, "swaggest/usecase_test.TestNewIOI", u.Name())
-	assert.Equal(t, "TestNewIOI", u.Title())
+	assert.Equal(t, "Test New IOI", u.Title())
+
+	u = (&Foo{}).Bar()
+	assert.Equal(t, "swaggest/usecase_test.(*Foo).Bar", u.Name())
+	assert.Equal(t, "Foo Bar", u.Title())
+
+	u = Foo{}.Baz()
+	assert.Equal(t, "swaggest/usecase_test.Foo.Baz", u.Name())
+	assert.Equal(t, "Foo Baz", u.Title())
 }
