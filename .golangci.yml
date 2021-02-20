@@ -24,6 +24,7 @@ linters:
     - gochecknoglobals
     - interfacer
     - exhaustivestruct
+    - cyclop
 
 issues:
   exclude-use-default: false
