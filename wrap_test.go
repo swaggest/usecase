@@ -131,7 +131,7 @@ func TestErrorCatcher_Wrap(t *testing.T) {
 	})
 
 	called := false
-	uw := usecase.Wrap(u, usecase.ErrorCatcher(func(err error) {
+	uw := usecase.Wrap(u, usecase.ErrorCatcher(func(ctx context.Context, input interface{}, err error) {
 		called = true
 		assert.EqualError(t, err, "failed")
 	}))

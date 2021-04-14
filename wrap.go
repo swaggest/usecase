@@ -11,14 +11,14 @@ type Middleware interface {
 }
 
 // ErrorCatcher is a use case middleware that collects non empty errors.
-type ErrorCatcher func(err error)
+type ErrorCatcher func(ctx context.Context, input interface{}, err error)
 
 // Wrap implements Middleware.
 func (e ErrorCatcher) Wrap(interactor Interactor) Interactor {
 	return Interact(func(ctx context.Context, input, output interface{}) error {
 		err := interactor.Interact(ctx, input, output)
 		if err != nil {
-			e(err)
+			e(ctx, input, err)
 		}
 
 		return err
