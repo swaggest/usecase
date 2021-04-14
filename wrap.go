@@ -1,12 +1,28 @@
 package usecase
 
 import (
+	"context"
 	"reflect"
 )
 
 // Middleware creates decorated use case interactor.
 type Middleware interface {
 	Wrap(interactor Interactor) Interactor
+}
+
+// ErrorCatcher is a use case middleware that collects non empty errors.
+type ErrorCatcher func(err error)
+
+// Wrap implements Middleware.
+func (e ErrorCatcher) Wrap(interactor Interactor) Interactor {
+	return Interact(func(ctx context.Context, input, output interface{}) error {
+		err := interactor.Interact(ctx, input, output)
+		if err != nil {
+			e(err)
+		}
+
+		return err
+	})
 }
 
 // MiddlewareFunc makes Middleware from function.

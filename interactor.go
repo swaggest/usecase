@@ -219,7 +219,7 @@ func callerFunc() (string, string) {
 }
 
 // borrowed from https://pkg.go.dev/github.com/fatih/camelcase#Split to avoid external dependency.
-func splitCamelcase(src string) string {
+func splitCamelcase(src string) string { // nolint:cyclop
 	// don't split invalid utf8
 	if !utf8.ValidString(src) {
 		return src
@@ -230,8 +230,7 @@ func splitCamelcase(src string) string {
 		runes   [][]rune
 	)
 
-	lastClass := 0
-	class := 0
+	var class, lastClass int
 
 	// split into fields based on class of unicode character
 	for _, r := range src {
