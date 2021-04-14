@@ -2,6 +2,7 @@ package usecase_test
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -122,4 +123,19 @@ func TestAs_panics(t *testing.T) {
 	assert.Panics(t, func() {
 		usecase.As(u, &usecase.Info{})
 	})
+}
+
+func TestErrorCatcher_Wrap(t *testing.T) {
+	u := usecase.NewIOI(nil, nil, func(ctx context.Context, input, output interface{}) error {
+		return errors.New("failed")
+	})
+
+	called := false
+	uw := usecase.Wrap(u, usecase.ErrorCatcher(func(err error) {
+		called = true
+		assert.EqualError(t, err, "failed")
+	}))
+
+	assert.EqualError(t, uw.Interact(context.Background(), nil, nil), "failed")
+	assert.True(t, called)
 }
