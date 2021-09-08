@@ -14,15 +14,18 @@ type Middleware interface {
 type ErrorCatcher func(ctx context.Context, input interface{}, err error)
 
 // Wrap implements Middleware.
-func (e ErrorCatcher) Wrap(interactor Interactor) Interactor {
-	return Interact(func(ctx context.Context, input, output interface{}) error {
-		err := interactor.Interact(ctx, input, output)
-		if err != nil {
-			e(ctx, input, err)
-		}
+func (e ErrorCatcher) Wrap(u Interactor) Interactor {
+	return &wrappedInteractor{
+		Interactor: Interact(func(ctx context.Context, input, output interface{}) error {
+			err := u.Interact(ctx, input, output)
+			if err != nil {
+				e(ctx, input, err)
+			}
 
-		return err
-	})
+			return err
+		}),
+		wrapped: u,
+	}
 }
 
 // MiddlewareFunc makes Middleware from function.

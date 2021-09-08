@@ -100,6 +100,7 @@ type Info struct {
 var (
 	_ HasTags           = Info{}
 	_ HasTitle          = Info{}
+	_ HasName           = Info{}
 	_ HasDescription    = Info{}
 	_ HasIsDeprecated   = Info{}
 	_ HasExpectedErrors = Info{}
@@ -183,6 +184,10 @@ func NewIOI(input, output interface{}, interact Interact) IOInteractor {
 	u.Interactor = interact
 
 	u.name, u.title = callerFunc()
+
+	u.name = strings.TrimPrefix(u.name, "internal/")
+	u.name = strings.TrimPrefix(u.name, "usecase.")
+	u.name = strings.TrimPrefix(u.name, "./main.")
 
 	return u
 }
