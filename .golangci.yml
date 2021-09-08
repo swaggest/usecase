@@ -28,8 +28,11 @@ linters:
     - paralleltest
     - forbidigo
     - exhaustivestruct
-    - interfacer
+    - interfacer # deprecated
     - forcetypeassert
+    - scopelint # deprecated
+    - ifshort # too many false positives
+    - golint # deprecated
 
 issues:
   exclude-use-default: false
