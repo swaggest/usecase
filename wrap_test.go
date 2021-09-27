@@ -12,12 +12,12 @@ import (
 func TestWrap(t *testing.T) {
 	var (
 		invocationOrder []string
-		withInput       usecase.HasInputPort
-		withOutput      usecase.HasOutputPort
+		withInput       usecase.HasInputPort[*string]
+		withOutput      usecase.HasOutputPort[*string]
 	)
 
-	f := func(next usecase.Interactor, name string) usecase.Interactor {
-		return usecase.Interact(func(ctx context.Context, input, output interface{}) error {
+	f := func(next usecase.Interactor[*string, *string], name string) usecase.Interactor[*string, *string] {
+		return usecase.Interact[*string, *string](func(ctx context.Context, input *string, output *string) error {
 			invocationOrder = append(invocationOrder, name+" start")
 			err := next.Interact(ctx, input, output)
 			invocationOrder = append(invocationOrder, name+" end")
@@ -26,37 +26,37 @@ func TestWrap(t *testing.T) {
 		})
 	}
 
-	mw1 := usecase.MiddlewareFunc(func(next usecase.Interactor) usecase.Interactor {
+	mw1 := usecase.MiddlewareFunc[*string, *string](func(next usecase.Interactor[*string, *string]) usecase.Interactor[*string, *string] {
 		assert.False(t, usecase.As(next, &withInput))
 		assert.True(t, usecase.As(next, &withOutput))
 
 		u := struct {
-			usecase.HasInputPort
-			usecase.Interactor
+			usecase.HasInputPort[*string]
+			usecase.Interactor[*string, *string]
 		}{
-			HasInputPort: usecase.WithInput{Input: new(string)},
+			HasInputPort: usecase.WithInput[*string]{Input: new(string)},
 			Interactor:   f(next, "mw1"),
 		}
 
 		return u
 	})
 
-	mw2 := usecase.MiddlewareFunc(func(next usecase.Interactor) usecase.Interactor {
+	mw2 := usecase.MiddlewareFunc[*string, *string](func(next usecase.Interactor[*string, *string]) usecase.Interactor[*string, *string] {
 		assert.False(t, usecase.As(next, &withInput))
 		assert.False(t, usecase.As(next, &withOutput))
 
 		u := struct {
-			usecase.HasOutputPort
-			usecase.Interactor
+			usecase.HasOutputPort[*string]
+			usecase.Interactor[*string, *string]
 		}{
-			HasOutputPort: usecase.WithOutput{Output: new(string)},
+			HasOutputPort: usecase.WithOutput[*string]{Output: new(string)},
 			Interactor:    f(next, "mw2"),
 		}
 
 		return u
 	})
 
-	i := usecase.Wrap(usecase.Interact(func(ctx context.Context, input, output interface{}) error {
+	i := usecase.Wrap[*string, *string](usecase.Interact[*string, *string](func(ctx context.Context, input *string, output *string) error {
 		invocationOrder = append(invocationOrder, "interaction")
 
 		return nil
@@ -77,51 +77,50 @@ func TestAs(t *testing.T) {
 	}
 
 	u := struct {
-		usecase.Interactor
-		usecase.HasInputPort
-		usecase.HasOutputPort
+		usecase.Interactor[interface{}, *Response]
+		usecase.HasInputPort[interface{}]
+		usecase.HasOutputPort[*Response]
 	}{
-		Interactor: usecase.Interact(func(ctx context.Context, input, output interface{}) error {
-			o, ok := output.(*Response)
-			assert.True(t, ok)
+		Interactor: usecase.Interact[interface{}, *Response](func(ctx context.Context, input interface{}, output *Response) error {
+			o := output
 
 			o.Name = "Jane"
 
 			return nil
 		}),
-		HasOutputPort: usecase.WithOutput{
-			Output: Response{},
+		HasOutputPort: usecase.WithOutput[*Response]{
+			Output: &Response{},
 		},
 	}
 
 	var (
-		withOutput usecase.HasOutputPort
-		withInput  usecase.HasInputPort
+		withOutput usecase.HasOutputPort[*Response]
+		withInput  usecase.HasInputPort[interface{}]
 	)
 
-	assert.True(t, usecase.As(u, &withInput))
-	assert.True(t, usecase.As(u, &withOutput))
+	assert.True(t, usecase.As[interface{}, *Response](u, &withInput))
+	assert.True(t, usecase.As[interface{}, *Response](u, &withOutput))
 }
 
 func TestAs_panics(t *testing.T) {
 	u := struct {
-		usecase.Interactor
+		usecase.Interactor[interface{}, interface{}]
 		usecase.Info
 	}{}
 
 	// target cannot be nil.
 	assert.Panics(t, func() {
-		usecase.As(u, nil)
+		usecase.As[interface{}, interface{}](u, nil)
 	})
 
 	// target must be a non-nil pointer.
 	assert.Panics(t, func() {
-		usecase.As(u, 123)
+		usecase.As[interface{}, interface{}](u, 123)
 	})
 
 	// *target must be interface.
 	assert.Panics(t, func() {
-		usecase.As(u, &usecase.Info{})
+		usecase.As[interface{}, interface{}](u, &usecase.Info{})
 	})
 }
 
@@ -131,7 +130,7 @@ func TestErrorCatcher_Wrap(t *testing.T) {
 	})
 
 	called := false
-	uw := usecase.Wrap(u, usecase.ErrorCatcher(func(ctx context.Context, input interface{}, err error) {
+	uw := usecase.Wrap[interface{}, interface{}](u, usecase.ErrorCatcher[interface{}, interface{}](func(ctx context.Context, input interface{}, err error) {
 		called = true
 		assert.EqualError(t, err, "failed")
 	}))

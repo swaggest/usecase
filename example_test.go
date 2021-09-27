@@ -21,10 +21,10 @@ func ExampleNewIOI() {
 		Value2 string `json:"value2"`
 	}
 
-	u := usecase.NewIOI(new(myInput), new(myOutput), func(ctx context.Context, input, output interface{}) error {
+	u := usecase.NewIOI[*myInput, *myOutput](new(myInput), new(myOutput), func(ctx context.Context, input *myInput, output *myOutput) error {
 		var (
-			in  = input.(*myInput)
-			out = output.(*myOutput)
+			in  = input
+			out = output
 		)
 
 		if in.Param1%2 != 0 {

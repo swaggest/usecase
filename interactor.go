@@ -12,48 +12,48 @@ import (
 // Interactor orchestrates the flow of data to and from the entities,
 // and direct those entities to use their enterprise
 // wide business rules to achieve the goals of the use case.
-type Interactor interface {
+type Interactor[i interface{}, o interface{}] interface {
 	// Interact sets output port value with regards to input port value or fails.
-	Interact(ctx context.Context, input, output interface{}) error
+	Interact(ctx context.Context, input i, output o) error
 }
 
 // Interact makes use case interactor from function.
-type Interact func(ctx context.Context, input, output interface{}) error
+type Interact[i interface{}, o interface{}] func(ctx context.Context, input i, output o) error
 
 // Interact implements Interactor.
-func (i Interact) Interact(ctx context.Context, input, output interface{}) error {
-	return i(ctx, input, output)
+func (f Interact[i, o]) Interact(ctx context.Context, input i, output o) error {
+	return f(ctx, input, output)
 }
 
 // HasInputPort declares input port.
-type HasInputPort interface {
+type HasInputPort[i interface{}] interface {
 	// InputPort returns sample of input value, e.g. new(MyInput).
-	InputPort() interface{}
+	InputPort() i
 }
 
 // WithInput is an embeddable implementation of HasInputPort.
-type WithInput struct {
-	Input interface{}
+type WithInput[i interface{}] struct {
+	Input i
 }
 
 // InputPort implements HasInputPort.
-func (wi WithInput) InputPort() interface{} {
+func (wi WithInput[i]) InputPort() i {
 	return wi.Input
 }
 
 // HasOutputPort declares output port.
-type HasOutputPort interface {
+type HasOutputPort[o interface{}] interface {
 	// OutputPort returns sample of output value, e.g. new(MyOutput).
-	OutputPort() interface{}
+	OutputPort() o
 }
 
 // WithOutput is an embeddable implementation of HasOutputPort.
-type WithOutput struct {
-	Output interface{}
+type WithOutput[o interface{}] struct {
+	Output o
 }
 
 // OutputPort implements HasOutputPort.
-func (wi WithOutput) OutputPort() interface{} {
+func (wi WithOutput[o]) OutputPort() o {
 	return wi.Output
 }
 
@@ -167,18 +167,18 @@ func (i *Info) SetName(name string) {
 }
 
 // IOInteractor is an interactor with input and output.
-type IOInteractor struct {
-	Interactor
+type IOInteractor[i interface{}, o interface{}] struct {
+	Interactor[i, o]
 	Info
-	WithInput
-	WithOutput
+	WithInput[i]
+	WithOutput[o]
 }
 
 // NewIOI creates use case interactor with input, output and interact action function.
 //
 // It pre-fills name and title with caller function.
-func NewIOI(input, output interface{}, interact Interact) IOInteractor {
-	u := IOInteractor{}
+func NewIOI[i interface{}, o interface{}](input i, output o, interact Interact[i, o]) IOInteractor[i, o] {
+	u := IOInteractor[i, o]{}
 	u.Input = input
 	u.Output = output
 	u.Interactor = interact

@@ -6,17 +6,17 @@ import (
 )
 
 // Middleware creates decorated use case interactor.
-type Middleware interface {
-	Wrap(interactor Interactor) Interactor
+type Middleware[i interface{}, o interface{}] interface {
+	Wrap(interactor Interactor[i, o]) Interactor[i, o]
 }
 
 // ErrorCatcher is a use case middleware that collects non empty errors.
-type ErrorCatcher func(ctx context.Context, input interface{}, err error)
+type ErrorCatcher[i interface{}, o interface{}] func(ctx context.Context, input i, err error)
 
 // Wrap implements Middleware.
-func (e ErrorCatcher) Wrap(u Interactor) Interactor {
-	return &wrappedInteractor{
-		Interactor: Interact(func(ctx context.Context, input, output interface{}) error {
+func (e ErrorCatcher[i, o]) Wrap(u Interactor[i, o]) Interactor[i, o] {
+	return &wrappedInteractor[i, o]{
+		Interactor: Interact[i, o](func(ctx context.Context, input i, output o) error {
 			err := u.Interact(ctx, input, output)
 			if err != nil {
 				e(ctx, input, err)
@@ -29,10 +29,10 @@ func (e ErrorCatcher) Wrap(u Interactor) Interactor {
 }
 
 // MiddlewareFunc makes Middleware from function.
-type MiddlewareFunc func(next Interactor) Interactor
+type MiddlewareFunc[i interface{}, o interface{}] func(next Interactor[i, o]) Interactor[i, o]
 
 // Wrap decorates use case interactor.
-func (mwf MiddlewareFunc) Wrap(interactor Interactor) Interactor {
+func (mwf MiddlewareFunc[i, o]) Wrap(interactor Interactor[i, o]) Interactor[i, o] {
 	return mwf(interactor)
 }
 
@@ -40,11 +40,11 @@ func (mwf MiddlewareFunc) Wrap(interactor Interactor) Interactor {
 //
 // Having arguments i, mw1, mw2 the order of invocation is: mw1, mw2, i, mw2, mw1.
 // Middleware mw1 can find behaviors of mw2 with As, but not vice versa.
-func Wrap(interactor Interactor, mw ...Middleware) Interactor {
-	for i := len(mw) - 1; i >= 0; i-- {
-		w := mw[i].Wrap(interactor)
+func Wrap[i interface{}, o interface{}](interactor Interactor[i, o], mw ...Middleware[i, o]) Interactor[i, o] {
+	for j := len(mw) - 1; j >= 0; j-- {
+		w := mw[j].Wrap(interactor)
 		if w != nil {
-			interactor = &wrappedInteractor{
+			interactor = &wrappedInteractor[i, o]{
 				Interactor: w,
 				wrapped:    interactor,
 			}
@@ -62,7 +62,7 @@ func Wrap(interactor Interactor, mw ...Middleware) Interactor {
 //
 // As will panic if target is not a non-nil pointer to either a type that implements
 // Interactor, or to any interface type.
-func As(interactor Interactor, target interface{}) bool {
+func As[i interface{}, o interface{}](interactor Interactor[i, o], target interface{}) bool {
 	if interactor == nil {
 		return false
 	}
@@ -85,7 +85,7 @@ func As(interactor Interactor, target interface{}) bool {
 	targetType := typ.Elem()
 
 	for {
-		wrap, isWrap := interactor.(*wrappedInteractor)
+		wrap, isWrap := interactor.(*wrappedInteractor[i, o])
 
 		if isWrap {
 			interactor = wrap.Interactor
@@ -107,7 +107,7 @@ func As(interactor Interactor, target interface{}) bool {
 	return false
 }
 
-type wrappedInteractor struct {
-	Interactor
-	wrapped Interactor
+type wrappedInteractor[i interface{}, o interface{}] struct {
+	Interactor[i, o]
+	wrapped Interactor[i, o]
 }
