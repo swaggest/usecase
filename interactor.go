@@ -12,13 +12,13 @@ import (
 // Interactor orchestrates the flow of data to and from the entities,
 // and direct those entities to use their enterprise
 // wide business rules to achieve the goals of the use case.
-type Interactor[i interface{}, o interface{}] interface {
+type Interactor[i any, o any] interface {
 	// Interact sets output port value with regards to input port value or fails.
 	Interact(ctx context.Context, input i, output o) error
 }
 
 // Interact makes use case interactor from function.
-type Interact[i interface{}, o interface{}] func(ctx context.Context, input i, output o) error
+type Interact[i any, o any] func(ctx context.Context, input i, output o) error
 
 // Interact implements Interactor.
 func (f Interact[i, o]) Interact(ctx context.Context, input i, output o) error {
@@ -167,7 +167,7 @@ func (i *Info) SetName(name string) {
 }
 
 // IOInteractor is an interactor with input and output.
-type IOInteractor[i interface{}, o interface{}] struct {
+type IOInteractor[i any, o any] struct {
 	Interactor[i, o]
 	Info
 	WithInput[i]
@@ -177,7 +177,7 @@ type IOInteractor[i interface{}, o interface{}] struct {
 // NewIOI creates use case interactor with input, output and interact action function.
 //
 // It pre-fills name and title with caller function.
-func NewIOI[i interface{}, o interface{}](input i, output o, interact Interact[i, o]) IOInteractor[i, o] {
+func NewIOI[i any, o any](input i, output o, interact Interact[i, o]) IOInteractor[i, o] {
 	u := IOInteractor[i, o]{}
 	u.Input = input
 	u.Output = output

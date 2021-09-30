@@ -6,12 +6,12 @@ import (
 )
 
 // Middleware creates decorated use case interactor.
-type Middleware[i interface{}, o interface{}] interface {
+type Middleware[i any, o any] interface {
 	Wrap(interactor Interactor[i, o]) Interactor[i, o]
 }
 
 // ErrorCatcher is a use case middleware that collects non empty errors.
-type ErrorCatcher[i interface{}, o interface{}] func(ctx context.Context, input i, err error)
+type ErrorCatcher[i any, o any] func(ctx context.Context, input i, err error)
 
 // Wrap implements Middleware.
 func (e ErrorCatcher[i, o]) Wrap(u Interactor[i, o]) Interactor[i, o] {
@@ -29,7 +29,7 @@ func (e ErrorCatcher[i, o]) Wrap(u Interactor[i, o]) Interactor[i, o] {
 }
 
 // MiddlewareFunc makes Middleware from function.
-type MiddlewareFunc[i interface{}, o interface{}] func(next Interactor[i, o]) Interactor[i, o]
+type MiddlewareFunc[i any, o any] func(next Interactor[i, o]) Interactor[i, o]
 
 // Wrap decorates use case interactor.
 func (mwf MiddlewareFunc[i, o]) Wrap(interactor Interactor[i, o]) Interactor[i, o] {
@@ -40,7 +40,7 @@ func (mwf MiddlewareFunc[i, o]) Wrap(interactor Interactor[i, o]) Interactor[i, 
 //
 // Having arguments i, mw1, mw2 the order of invocation is: mw1, mw2, i, mw2, mw1.
 // Middleware mw1 can find behaviors of mw2 with As, but not vice versa.
-func Wrap[i interface{}, o interface{}](interactor Interactor[i, o], mw ...Middleware[i, o]) Interactor[i, o] {
+func Wrap[i any, o any](interactor Interactor[i, o], mw ...Middleware[i, o]) Interactor[i, o] {
 	for j := len(mw) - 1; j >= 0; j-- {
 		w := mw[j].Wrap(interactor)
 		if w != nil {
@@ -62,7 +62,7 @@ func Wrap[i interface{}, o interface{}](interactor Interactor[i, o], mw ...Middl
 //
 // As will panic if target is not a non-nil pointer to either a type that implements
 // Interactor, or to any interface type.
-func As[i interface{}, o interface{}](interactor Interactor[i, o], target interface{}) bool {
+func As[i any, o any](interactor Interactor[i, o], target interface{}) bool {
 	if interactor == nil {
 		return false
 	}
@@ -107,7 +107,7 @@ func As[i interface{}, o interface{}](interactor Interactor[i, o], target interf
 	return false
 }
 
-type wrappedInteractor[i interface{}, o interface{}] struct {
+type wrappedInteractor[i any, o any] struct {
 	Interactor[i, o]
 	wrapped Interactor[i, o]
 }
