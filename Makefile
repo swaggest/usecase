@@ -3,6 +3,8 @@
 # The head of Makefile determines location of dev-go to include standard targets.
 GO ?= go
 export GO111MODULE = on
+export GOFLAGS = -gcflags=-G=3
+
 
 ifneq "$(GOFLAGS)" ""
   $(info GOFLAGS: ${GOFLAGS})
