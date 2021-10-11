@@ -22,7 +22,7 @@ func (ioi IOInteractorOf[i, o]) Invoke(ctx context.Context, input i, output *o) 
 //
 // It pre-fills name and title with caller function.
 // Input is passed by value, while output is passed by pointer to be mutable.
-func NewInteractor[i, o interface{}](interact func(ctx context.Context, input i, output *o) error) IOInteractorOf[i, o] {
+func NewInteractor[i, o any](interact func(ctx context.Context, input i, output *o) error) IOInteractorOf[i, o] {
 	u := IOInteractorOf[i, o]{}
 	u.Input = *new(i)
 	u.Output = new(o)

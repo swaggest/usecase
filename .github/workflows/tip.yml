@@ -9,7 +9,7 @@ env:
   GO111MODULE: "on"
   RUN_BASE_COVERAGE: "on"  # Runs test for PR base in case base test coverage is missing.
 jobs:
-  test-bench:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
