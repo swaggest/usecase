@@ -24,6 +24,8 @@ This abstraction is intended for use with automated transport layer, for example
 
 ## Usage
 
+### Input/Output Definitions
+
 ```go
 // Configure use case interactor in application layer.
 type myInput struct {
@@ -36,6 +38,10 @@ type myOutput struct {
     Value2 string `json:"value2"`
 }
 
+```
+### Classic API
+
+```go
 u := usecase.NewIOI(new(myInput), new(myOutput), func(ctx context.Context, input, output interface{}) error {
     var (
         in  = input.(*myInput)
@@ -53,6 +59,30 @@ u := usecase.NewIOI(new(myInput), new(myOutput), func(ctx context.Context, input
     return nil
 })
 
+```
+
+### Generic API with type parameters
+
+With `go1.18` and later (or [`gotip`](https://pkg.go.dev/golang.org/dl/gotip)) you can use simplified generic API instead 
+of classic API based on `interface{}`.
+
+```go
+u := usecase.NewInteractor(func(ctx context.Context, input myInput, output *myOutput) error {
+    if in.Param1%2 != 0 {
+        return status.InvalidArgument
+    }
+
+    // Do something to set output based on input.
+    out.Value1 = in.Param1 + in.Param1
+    out.Value2 = in.Param2 + in.Param2
+
+    return nil
+})
+```
+
+### Further Configuration And Usage
+
+```go
 // Additional properties can be configured for purposes of automated documentation.
 u.SetTitle("Doubler")
 u.SetDescription("Doubler doubles parameter values.")
