@@ -184,10 +184,7 @@ func NewIOI(input, output interface{}, interact Interact) IOInteractor {
 	u.Interactor = interact
 
 	u.name, u.title = callerFunc()
-
-	u.name = strings.TrimPrefix(u.name, "internal/")
-	u.name = strings.TrimPrefix(u.name, "usecase.")
-	u.name = strings.TrimPrefix(u.name, "./main.")
+	u.name = filterName(u.name)
 
 	return u
 }
@@ -198,6 +195,14 @@ var titleReplacer = strings.NewReplacer(
 	"*", "",
 	")", "",
 )
+
+func filterName(name string) string {
+	name = strings.TrimPrefix(name, "internal/")
+	name = strings.TrimPrefix(name, "usecase.")
+	name = strings.TrimPrefix(name, "./main.")
+
+	return name
+}
 
 // callerFunc returns trimmed path and name of parent function.
 func callerFunc() (string, string) {

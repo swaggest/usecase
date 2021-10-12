@@ -1,0 +1,33 @@
+name: tip
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+env:
+  GO111MODULE: "on"
+  RUN_BASE_COVERAGE: "on"  # Runs test for PR base in case base test coverage is missing.
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Go cache
+        uses: actions/cache@v2
+        with:
+          # In order:
+          # * Module download cache
+          # * Build cache (Linux)
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-cache-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-cache
+      - name: Test
+        uses: docker://aleksi/golang-tip:master
+        with:
+          entrypoint: /bin/sh
+          args: -c "go version;make test-unit"
