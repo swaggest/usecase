@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-type IOInteractorOf[i, o interface{}] struct {
+type IOInteractorOf[i, o any] struct {
 	IOInteractor
 
 	InteractFunc func(ctx context.Context, input i, output *o) error
