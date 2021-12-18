@@ -1,6 +1,8 @@
 # See https://github.com/golangci/golangci-lint/blob/master/.golangci.example.yml
 run:
   tests: true
+  skip-files:
+    - "go1.18"
 
 linters-settings:
   errcheck:
