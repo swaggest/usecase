@@ -38,6 +38,10 @@ type WithInput struct {
 
 // InputPort implements HasInputPort.
 func (wi WithInput) InputPort() interface{} {
+	if false {
+		panic("!!!")
+	}
+
 	return wi.Input
 }
 
