@@ -3,8 +3,7 @@ name: gorelease
 on:
   pull_request:
 env:
-  GO111MODULE: "on"
-  GO_VERSION: "1.17.x"
+  GO_VERSION: 1.17.x
 jobs:
   gorelease:
     runs-on: ubuntu-latest
