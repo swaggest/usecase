@@ -70,4 +70,14 @@ func TestNewIOI(t *testing.T) {
 	u = Foo{}.Baz()
 	assert.Equal(t, "swaggest/usecase_test.Foo.Baz", u.Name())
 	assert.Equal(t, "Foo Baz", u.Title())
+
+	u = fooBar()
+	assert.Equal(t, "swaggest/usecase_test.fooBar", u.Name())
+	assert.Equal(t, "Foo Bar", u.Title())
+}
+
+func fooBar() usecase.IOInteractor {
+	return usecase.NewIOI(nil, nil, func(ctx context.Context, input, output interface{}) error {
+		return nil
+	})
 }

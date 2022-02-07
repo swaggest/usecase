@@ -221,6 +221,15 @@ func callerFunc() (string, string) {
 	parts := strings.SplitN(title, ".", 2)
 	if len(parts) != 1 {
 		title = parts[len(parts)-1]
+		if len(title) == 0 {
+			return pathName, ""
+		}
+
+		// Uppercase first character of title.
+		r := []rune(title)
+		r[0] = unicode.ToUpper(r[0])
+		title = string(r)
+
 		title = titleReplacer.Replace(title)
 		title = splitCamelcase(title)
 	}
