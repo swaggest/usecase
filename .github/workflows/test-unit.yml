@@ -18,11 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install Go stable
-        if: matrix.go-version != 'tip'
+        if: matrix.go-version != '1.18rc1'
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
-      - name: Install Go tip
+      - name: Install Go 1.18 RC
         if: matrix.go-version == '1.18rc1'
         run: |
           curl -sL https://go.dev/dl/go1.18rc1.linux-amd64.tar.gz -o go1.18rc1.linux-amd64.tar.gz
