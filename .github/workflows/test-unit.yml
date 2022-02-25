@@ -29,8 +29,8 @@ jobs:
           ls -lah go1.18rc1.linux-amd64.tar.gz
           mkdir -p ~/sdk/go1.18rc1
           tar -C ~/sdk/go1.18rc1 -xzf go1.18rc1.linux-amd64.tar.gz
-          ~/sdk/go1.18rc1/bin/go version
-          echo "PATH=$HOME/go/bin:$HOME/sdk/go1.18rc1/bin/:$PATH" >> $GITHUB_ENV
+          ~/sdk/go1.18rc1/go/bin/go version
+          echo "PATH=$HOME/go/bin:$HOME/sdk/go1.18rc1/go/bin/:$PATH" >> $GITHUB_ENV
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Go cache
