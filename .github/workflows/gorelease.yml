@@ -30,12 +30,13 @@ jobs:
         with:
           path: |
             ~/go/bin/gorelease
-          key: ${{ runner.os }}-gorelease
+          key: ${{ runner.os }}-${{ env.GO_VERSION }}-gorelease
       - name: Gorelease
+        continue-on-error: true
         id: gorelease
         run: |
           test -e ~/go/bin/gorelease || go install golang.org/x/exp/cmd/gorelease@latest
-          OUTPUT=$(gorelease || exit 0)
+          OUTPUT=$(gorelease)
           echo "${OUTPUT}"
           OUTPUT="${OUTPUT//$'\n'/%0A}"
           echo "::set-output name=report::$OUTPUT"
