@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-type IOInteractorOf[i, o interface{}] struct {
+type IOInteractorOf[i, o any] struct {
 	IOInteractor
 
 	InteractFunc func(ctx context.Context, input i, output *o) error
@@ -27,7 +27,7 @@ func NewInteractor[i, o any](interact func(ctx context.Context, input i, output 
 	u.Input = *new(i)
 	u.Output = new(o)
 	u.InteractFunc = interact
-	u.Interactor = Interact(func(ctx context.Context, input, output interface{}) error {
+	u.Interactor = Interact(func(ctx context.Context, input, output any) error {
 		inp, ok := input.(i)
 		if !ok {
 			return fmt.Errorf("invalid input type received: %T, expected: %T", input, u.Input)
