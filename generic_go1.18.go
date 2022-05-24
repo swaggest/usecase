@@ -14,6 +14,10 @@ type IOInteractorOf[i, o any] struct {
 	InteractFunc func(ctx context.Context, input i, output *o) error
 }
 
+type Fo[o any] struct {
+	Bar IOInteractorOf[o, o]
+}
+
 func (ioi IOInteractorOf[i, o]) Invoke(ctx context.Context, input i, output *o) error {
 	return ioi.InteractFunc(ctx, input, output)
 }
