@@ -8,17 +8,17 @@ import (
 	"fmt"
 )
 
-type IOInteractorOof[i, o any] struct {
+// ErrInvalidType is returned on port type assertion error.
+const ErrInvalidType = sentinelError("invalid type")
+
+// IOInteractorOf is an IOInteractor with parametrized input/output types.
+type IOInteractorOf[i, o any] struct {
 	IOInteractor
 
 	InteractFunc func(ctx context.Context, input i, output *o) error
 }
 
-type Fo[o any] struct {
-	Bar IOInteractorOof[o, o]
-}
-
-func (ioi IOInteractorOof[i, o]) Invoke(ctx context.Context, input i, output *o) error {
+func (ioi IOInteractorOf[i, o]) Invoke(ctx context.Context, input i, output *o) error {
 	return ioi.InteractFunc(ctx, input, output)
 }
 
@@ -26,20 +26,20 @@ func (ioi IOInteractorOof[i, o]) Invoke(ctx context.Context, input i, output *o)
 //
 // It pre-fills name and title with caller function.
 // Input is passed by value, while output is passed by pointer to be mutable.
-func NewInteractor[i, o any](interact func(ctx context.Context, input i, output *o) error) IOInteractorOof[i, o] {
-	u := IOInteractorOof[i, o]{}
+func NewInteractor[i, o any](interact func(ctx context.Context, input i, output *o) error) IOInteractorOf[i, o] {
+	u := IOInteractorOf[i, o]{}
 	u.Input = *new(i)
 	u.Output = new(o)
 	u.InteractFunc = interact
 	u.Interactor = Interact(func(ctx context.Context, input, output any) error {
 		inp, ok := input.(i)
 		if !ok {
-			return fmt.Errorf("invalid input type received: %T, expected: %T", input, u.Input)
+			return fmt.Errorf("%w of input: %T, expected: %T", ErrInvalidType, input, u.Input)
 		}
 
 		out, ok := output.(*o)
 		if !ok {
-			return fmt.Errorf("invalid output type received: %T, expected: %T", output, u.Output)
+			return fmt.Errorf("%w f output: %T, expected: %T", ErrInvalidType, output, u.Output)
 		}
 
 		return interact(ctx, inp, out)

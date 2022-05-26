@@ -1,10 +1,6 @@
 # See https://github.com/golangci/golangci-lint/blob/master/.golangci.example.yml
 run:
   tests: true
-  skip-files:
-    - "go1.18"
-  skip-dirs:
-    - "../"
 
 linters-settings:
   errcheck:
@@ -41,6 +37,8 @@ linters:
     - tagliatelle
     - errname
     - ireturn
+    - exhaustruct
+    - nonamedreturns
 
 issues:
   exclude-use-default: false
@@ -54,4 +52,7 @@ issues:
         - dupl
         - errorlint
       path: "_test.go"
+    - linters:
+        - gocritic
+      text: "newDeref: replace `\\*new"
 

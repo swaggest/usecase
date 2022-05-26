@@ -38,3 +38,9 @@ func (e Error) Unwrap() error {
 
 	return e.Value
 }
+
+type sentinelError string
+
+func (s sentinelError) Error() string {
+	return string(s)
+}
