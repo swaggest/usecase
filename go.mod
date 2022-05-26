@@ -3,7 +3,7 @@ module github.com/swaggest/usecase
 go 1.18
 
 require (
-	github.com/bool64/dev v0.2.12-0.20220526211511-c274fcfe26e9
+	github.com/bool64/dev v0.2.12
 	github.com/stretchr/testify v1.7.1
 )
 

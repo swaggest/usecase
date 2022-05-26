@@ -52,4 +52,6 @@ func TestNewInteractor(t *testing.T) {
 	out = ""
 	assert.NoError(t, u.Invoke(ctx, 123, &out))
 	assert.Equal(t, "123", out)
+
+	assert.Equal(t, "invalid type", usecase.ErrInvalidType.Error())
 }
