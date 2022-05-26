@@ -8,6 +8,10 @@ import (
 	"fmt"
 )
 
+// ErrInvalidType is returned on port type assertion error.
+const ErrInvalidType = sentinelError("invalid type")
+
+// IOInteractorOf is an IOInteractor with parametrized input/output types.
 type IOInteractorOf[i, o any] struct {
 	IOInteractor
 
@@ -30,12 +34,12 @@ func NewInteractor[i, o any](interact func(ctx context.Context, input i, output 
 	u.Interactor = Interact(func(ctx context.Context, input, output any) error {
 		inp, ok := input.(i)
 		if !ok {
-			return fmt.Errorf("invalid input type received: %T, expected: %T", input, u.Input)
+			return fmt.Errorf("%w of input: %T, expected: %T", ErrInvalidType, input, u.Input)
 		}
 
 		out, ok := output.(*o)
 		if !ok {
-			return fmt.Errorf("invalid output type received: %T, expected: %T", output, u.Output)
+			return fmt.Errorf("%w f output: %T, expected: %T", ErrInvalidType, output, u.Output)
 		}
 
 		return interact(ctx, inp, out)

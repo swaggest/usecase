@@ -13,9 +13,12 @@ import (
 )
 
 func TestNewIOI_classic(t *testing.T) {
-	u := usecase.NewIOI(*new(int), new(string), func(ctx context.Context, input, output interface{}) error {
-		in := input.(int)
-		out := output.(*string)
+	u := usecase.NewIOI(0, new(string), func(ctx context.Context, input, output interface{}) error {
+		in, ok := input.(int)
+		assert.True(t, ok)
+
+		out, ok := output.(*string)
+		assert.True(t, ok)
 
 		*out = strconv.Itoa(in)
 
@@ -25,6 +28,7 @@ func TestNewIOI_classic(t *testing.T) {
 	ctx := context.Background()
 
 	var out string
+
 	assert.NoError(t, u.Interact(ctx, 123, &out))
 	assert.Equal(t, "123", out)
 }
@@ -41,10 +45,13 @@ func TestNewInteractor(t *testing.T) {
 	ctx := context.Background()
 
 	var out string
+
 	assert.NoError(t, u.Interact(ctx, 123, &out))
 	assert.Equal(t, "123", out)
 
 	out = ""
 	assert.NoError(t, u.Invoke(ctx, 123, &out))
 	assert.Equal(t, "123", out)
+
+	assert.Equal(t, "invalid type", usecase.ErrInvalidType.Error())
 }
