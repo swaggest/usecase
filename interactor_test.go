@@ -58,10 +58,13 @@ func (f Foo) Baz() usecase.IOInteractor {
 func TestNewIOI(t *testing.T) {
 	u := usecase.NewIOI(new(string), new(int), func(ctx context.Context, input, output interface{}) error {
 		return nil
+	}, func(i *usecase.IOInteractor) {
+		i.SetTags("foo")
 	})
 
 	assert.Equal(t, "swaggest/usecase_test.TestNewIOI", u.Name())
 	assert.Equal(t, "Test New IOI", u.Title())
+	assert.Equal(t, []string{"foo"}, u.Tags())
 
 	u = (&Foo{}).Bar()
 	assert.Equal(t, "swaggest/usecase_test.(*Foo).Bar", u.Name())

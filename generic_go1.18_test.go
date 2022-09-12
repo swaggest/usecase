@@ -38,6 +38,8 @@ func TestNewInteractor(t *testing.T) {
 		*output = strconv.Itoa(input)
 
 		return nil
+	}, func(i *usecase.IOInteractor) {
+		i.SetTags("foo")
 	})
 
 	u.SetDescription("Foo.")
@@ -54,4 +56,6 @@ func TestNewInteractor(t *testing.T) {
 	assert.Equal(t, "123", out)
 
 	assert.Equal(t, "invalid type", usecase.ErrInvalidType.Error())
+
+	assert.Equal(t, []string{"foo"}, u.Tags())
 }

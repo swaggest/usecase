@@ -39,20 +39,31 @@ linters:
     - ireturn
     - exhaustruct
     - nonamedreturns
+    - nosnakecase
+    - structcheck
+    - varcheck
+    - deadcode
 
 issues:
   exclude-use-default: false
   exclude-rules:
     - linters:
+        - gocritic
+      text: "newDeref:" # False-positive for generics.
+    - linters:
+        - errorlint
         - gomnd
         - goconst
         - goerr113
         - noctx
         - funlen
         - dupl
-        - errorlint
+        - structcheck
+        - unused
+        - unparam
+        - nosnakecase
       path: "_test.go"
     - linters:
-        - gocritic
-      text: "newDeref: replace `\\*new"
+        - errcheck # Error checking omitted for brevity.
+      path: "example_"
 
