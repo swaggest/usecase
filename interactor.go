@@ -177,7 +177,7 @@ type IOInteractor struct {
 // NewIOI creates use case interactor with input, output and interact action function.
 //
 // It pre-fills name and title with caller function.
-func NewIOI(input, output interface{}, interact Interact) IOInteractor {
+func NewIOI(input, output interface{}, interact Interact, options ...func(i *IOInteractor)) IOInteractor {
 	u := IOInteractor{}
 	u.Input = input
 	u.Output = output
@@ -185,6 +185,10 @@ func NewIOI(input, output interface{}, interact Interact) IOInteractor {
 
 	u.name, u.title = callerFunc()
 	u.name = filterName(u.name)
+
+	for _, o := range options {
+		o(&u)
+	}
 
 	return u
 }
@@ -238,7 +242,7 @@ func callerFunc() (string, string) {
 }
 
 // borrowed from https://pkg.go.dev/github.com/fatih/camelcase#Split to avoid external dependency.
-func splitCamelcase(src string) string { // nolint:cyclop
+func splitCamelcase(src string) string { //nolint:cyclop
 	// don't split invalid utf8
 	if !utf8.ValidString(src) {
 		return src

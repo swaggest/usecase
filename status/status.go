@@ -4,9 +4,9 @@ package status
 //
 // Should be consistent across all use cases to be expressible with different transport protocols.
 // Status codes are following gRPC conventions for RPC API:
-//  - https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
-//  - https://github.com/grpc/grpc-go/blob/master/codes/codes.go
-//  - https://github.com/googleapis/googleapis/blob/master/google/rpc/code.proto
+//   - https://github.com/grpc/grpc/blob/master/doc/statuscodes.md
+//   - https://github.com/grpc/grpc-go/blob/master/codes/codes.go
+//   - https://github.com/googleapis/googleapis/blob/master/google/rpc/code.proto
 type Code int
 
 const (
@@ -164,7 +164,7 @@ const (
 var (
 	strToCode = map[string]Code{
 		`OK`: OK,
-		// nolint:misspell // Due to historical reasons `CANCELLED` should be spelled with double L.
+		//nolint:misspell // Due to historical reasons `CANCELLED` should be spelled with double L.
 		`CANCELLED`:           Canceled,
 		`UNKNOWN`:             Unknown,
 		`INVALID_ARGUMENT`:    InvalidArgument,
