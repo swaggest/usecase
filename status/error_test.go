@@ -11,6 +11,8 @@ import (
 func TestWrap(t *testing.T) {
 	err := status.Wrap(errors.New("failed"), status.AlreadyExists)
 	assert.EqualError(t, err, "already exists: failed")
+	assert.True(t, errors.Is(err, status.AlreadyExists))
+	assert.False(t, errors.Is(err, status.NotFound))
 	assert.EqualError(t, err.(interface{ Unwrap() error }).Unwrap(), "failed")
 	assert.Equal(t, status.AlreadyExists, err.(interface{ Status() status.Code }).Status())
 }

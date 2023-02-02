@@ -1,6 +1,9 @@
 package status
 
-import "strings"
+import (
+	"errors"
+	"strings"
+)
 
 var codeToMsg = func() map[Code]string {
 	res := make(map[Code]string, len(strToCode))
@@ -27,6 +30,14 @@ func (e errorWithStatus) Error() string {
 
 func (e errorWithStatus) Unwrap() error {
 	return e.err
+}
+
+func (e errorWithStatus) Is(target error) bool {
+	if target == e.code { //nolint:goerr113 // Target is expected to be plain status error.
+		return true
+	}
+
+	return errors.Is(e.err, target)
 }
 
 func (e errorWithStatus) Status() Code {
