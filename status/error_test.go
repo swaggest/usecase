@@ -20,3 +20,16 @@ func TestWrap(t *testing.T) {
 func TestCode_Error(t *testing.T) {
 	assert.Equal(t, "deadline exceeded", status.DeadlineExceeded.Error())
 }
+
+func TestWithDescription(t *testing.T) {
+	err := status.WithDescription(status.AlreadyExists, "This is a description.")
+	assert.EqualError(t, err, "already exists")
+	assert.True(t, errors.Is(err, status.AlreadyExists))
+	assert.False(t, errors.Is(err, status.NotFound))
+
+	d, ok := err.(interface {
+		Description() string
+	})
+	assert.True(t, ok)
+	assert.Equal(t, "This is a description.", d.Description())
+}
