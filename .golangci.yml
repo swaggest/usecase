@@ -20,6 +20,7 @@ linters-settings:
 linters:
   enable-all: true
   disable:
+    - testifylint
     - lll
     - maligned
     - gochecknoglobals
@@ -45,13 +46,12 @@ linters:
     - deadcode
     - testableexamples
     - dupword
+    - depguard
+    - tagalign
 
 issues:
   exclude-use-default: false
   exclude-rules:
-    - linters:
-        - gocritic
-      text: "newDeref:" # False-positive for generics.
     - linters:
         - errorlint
         - gomnd
