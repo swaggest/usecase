@@ -19,6 +19,11 @@ func (c Code) Error() string {
 	return codeToMsg[c]
 }
 
+// Is implements interface for errors.Is.
+func (c Code) Is(target error) bool {
+	return target == c //nolint:goerr113 // Target is expected to be plain status error.
+}
+
 type errorWithStatus struct {
 	err  error
 	code Code
@@ -54,4 +59,22 @@ func Wrap(err error, code Code) error {
 		err:  err,
 		code: code,
 	}
+}
+
+type codeWithDescription struct {
+	Code
+	desc string
+}
+
+func (e codeWithDescription) Description() string {
+	return e.desc
+}
+
+// WithDescription augments status Code with textual description.
+func WithDescription(code Code, description string) error {
+	e := codeWithDescription{}
+	e.Code = code
+	e.desc = description
+
+	return e
 }
