@@ -203,6 +203,7 @@ var titleReplacer = strings.NewReplacer(
 func filterName(name string) string {
 	name = strings.TrimPrefix(name, "internal/")
 	name = strings.TrimPrefix(name, "usecase.")
+	name = strings.TrimPrefix(name, "usecase/")
 	name = strings.TrimPrefix(name, "./main.")
 
 	return name
